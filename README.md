@@ -3,7 +3,7 @@
 
 # GRUP UYELERI
 - Batuhan Bahayetmez                  / No: G211210043
-
+- Harun M. Yesilyurt                  / No: G211210089
 
 # DIZIN LISTESI
 - bin: calistirilabilir dosyalarinin bulundugu klasor.

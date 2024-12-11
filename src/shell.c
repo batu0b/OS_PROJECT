@@ -56,9 +56,71 @@ void execute_sequence(char *input)
     }
 }
 
-// TODO
 //  Girilen komutu çalıştırır (örn: "ls", "cat", vb.)
-void execute_command(char *command) { /* ... */ }
+void execute_command(char *command)
+{
+    //Harun Yesilyurt G211210089
+    char *args[MAX_ARGS];
+    int i = 0;
+    int background = 0;
+
+    // Komutları ayrıştır
+    args[i] = strtok(command, " ");
+    while (args[i] != NULL && i < MAX_ARGS - 1)
+    {
+        if (strcmp(args[i], "&") == 0)
+        {
+            background = 1;
+            args[i] = NULL;
+            break;
+        }
+        i++;
+        args[i] = strtok(NULL, " ");
+    }
+
+    // quit komutu
+    if (args[0] != NULL && strcmp(args[0], "quit") == 0)
+    {
+        exit(0);
+    }
+
+    // increment komutu
+    else if (args[0] != NULL && strcmp(args[0], "increment") == 0)
+    {
+        handle_increment(args);
+        return;
+    }
+
+    // Alt süreç oluştur ve çalıştır
+    pid_t pid = fork();
+    if (pid == 0)
+    {
+        // Çocuk süreç
+        handle_redirection(args);
+        if (execvp(args[0], args) == -1)
+        {
+            perror("Komut çalıştırılamadı");
+        }
+        exit(EXIT_FAILURE);
+    }
+    else if (pid > 0)
+    {
+        // Ana süreç
+        if (!background)
+        {
+            int status;
+            waitpid(pid, &status, 0);
+        }
+        else
+        {
+            printf("[PID: %d] Arka planda çalışıyor\n", pid);
+        }
+    }
+    else
+    {
+        perror("Fork başarısız oldu");
+    }
+}
 
 // TODO
 //  Komut içindeki dosya yönlendirmesini işler (">", "<" gibi)
