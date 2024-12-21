@@ -156,9 +156,96 @@ void handle_redirection(char **args)
     }
 }
 
-// TODO
 //  Pipe'lı (|) komutları işler
-int handle_pipe(char *command) { /* ... */ }
+int handle_pipe(char *command)
+{
+    char *commands[MAX_ARGS];
+    int i = 0;
+
+    // Komutları pipe ile ayır
+    commands[i] = strtok(command, "|");
+    while (commands[i] != NULL && i < MAX_ARGS - 1)
+    {
+        i++;
+        commands[i] = strtok(NULL, "|");
+    }
+
+    int num_commands = i;
+    int pipefds[2 * (num_commands - 1)];
+
+    // Tüm pipe'ları oluştur
+    for (int j = 0; j < num_commands - 1; j++)
+    {
+        if (pipe(pipefds + 2 * j) < 0)
+        {
+            perror("Pipe oluşturulamadı");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (int j = 0; j < num_commands; j++)
+    {
+        pid_t pid = fork();
+        if (pid == 0)
+        {
+            // İlk komut
+            if (j != 0)
+            {
+                dup2(pipefds[2 * (j - 1)], STDIN_FILENO);
+            }
+            // Son komut değilse
+            if (j != num_commands - 1)
+            {
+                dup2(pipefds[2 * j + 1], STDOUT_FILENO);
+            }
+
+            // Tüm pipe'ları kapat
+            for (int k = 0; k < 2 * (num_commands - 1); k++)
+            {
+                close(pipefds[k]);
+            }
+
+            char *args[MAX_ARGS];
+            int k = 0;
+            args[k] = strtok(commands[j], " ");
+            while (args[k] != NULL && k < MAX_ARGS - 1)
+            {
+                k++;
+                args[k] = strtok(NULL, " ");
+            }
+
+            // Increment iç komutunu ele al
+            if (strcmp(args[0], "increment") == 0)
+            {
+                handle_increment(args);
+                exit(EXIT_SUCCESS);
+            }
+
+            execvp(args[0], args);
+            perror("Komut çalıştırılamadı");
+            exit(EXIT_FAILURE);
+        }
+        else if (pid < 0)
+        {
+            perror("Fork başarısız oldu");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // Tüm pipe'ları kapat
+    for (int j = 0; j < 2 * (num_commands - 1); j++)
+    {
+        close(pipefds[j]);
+    }
+
+    // Tüm çocuk süreçlerin bitmesini bekle
+    for (int j = 0; j < num_commands; j++)
+    {
+        wait(NULL);
+    }
+
+    return 0;
+}
 
 // TODO
 //  "increment" komutunu işler ve bir sayıyı artırır
