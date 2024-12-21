@@ -247,6 +247,56 @@ int handle_pipe(char *command)
     return 0;
 }
 
-// TODO
 //  "increment" komutunu işler ve bir sayıyı artırır
-void handle_increment(char **args) { /* ... */ }
+void handle_increment(char **args)
+{
+    int num = 0;
+    int redirected = 0;
+
+    // Argümanlarda giriş yönlendirme var mı?
+    for (int i = 0; args[i] != NULL; i++)
+    {
+        if (strcmp(args[i], "<") == 0)
+        {
+            // Giriş yönlendirmesi
+            redirected = 1;
+            FILE *file = fopen(args[i + 1], "r");
+            if (file == NULL)
+            {
+                perror("Giriş dosyası açılamadı");
+                exit(EXIT_FAILURE);
+            }
+            if (fscanf(file, "%d", &num) != 1)
+            {
+                fprintf(stderr, "Hata: Dosyadan geçerli bir sayı okunamadı.\n");
+                fclose(file);
+                exit(EXIT_FAILURE);
+            }
+            fclose(file);
+            break;
+        }
+    }
+
+    // Eğer giriş yönlendirme yoksa komut satırı argümanlarını kontrol et
+    if (!redirected)
+    {
+        if (args[1] != NULL)
+        {
+            num = atoi(args[1]);
+        }
+        else
+        {
+            // Standart girişten veri oku
+            if (scanf("%d", &num) != 1)
+            {
+                fprintf(stderr, "Hata: Geçerli bir sayı okunamadı.\n");
+                clearerr(stdin);
+                return;
+            }
+        }
+    }
+
+    // Sayıyı bir arttır ve yazdır
+    printf("%d\n", num + 1);
+    fflush(stdout);
+}
