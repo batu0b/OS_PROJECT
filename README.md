@@ -2,8 +2,11 @@
 - Terminal uzerinden make yazarak derleyip calistirabilirsiniz.
 
 # GRUP UYELERI
-- Batuhan Bahayetmez                  / No: G211210043
-- Harun M. Yesilyurt                  / No: G211210089
+- Ömer Faruk Aydın - G221210370 - 1.Öğretim A Grubu
+- Tarık Kartal - Y245012016 - 1. Öğretim A Grubu
+- Harun Mahmut Yeşilyurt - G211210089 - 2. Öğretim B Grubu
+- Batuhan Bahayetmez - G211210043 - 2. Öğretim A Grubu
+- Talha İmran Göneç - G221210032 - 2. Öğretim B Grubu
 
 # DIZIN LISTESI
 - bin: calistirilabilir dosyalarinin bulundugu klasor.
