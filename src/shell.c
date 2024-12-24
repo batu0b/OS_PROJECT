@@ -139,6 +139,7 @@ void handle_redirection(char **args)
             dup2(fd, STDIN_FILENO);
             close(fd);
             args[i] = NULL;
+            args[i + 1] = NULL;   // Dosya adını da kaldır
         }
         else if (strcmp(args[i], ">") == 0)
         {
