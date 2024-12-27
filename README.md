@@ -4,7 +4,7 @@
 
 # PROJE: Temel Bir Linux Kabuk Uygulaması Geliştirme
 # GRUP ADI: 12AB Grubu
-
+# GRUP NO : 8
 # GRUP UYELERI
 - Ömer Faruk Aydın - G221210370 - 1.Öğretim A Grubu
 - Tarık Kartal - Y245012016 - 1. Öğretim A Grubu
